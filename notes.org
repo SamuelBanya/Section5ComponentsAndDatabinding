@@ -96,3 +96,53 @@ I then declared the other child components for 'app-cockpit' and 'app-server-ele
   </div>
 </div>
 #+end_src
+
+* Notes On Property & Event Binding
+Examples of using property & event binding used thus far:
+- HTML elements --> Native Properties & Events
+- Directives --> Custom Properties & Events
+- NEW FOR THIS PROJECT'S SITUATION:
+- Components --> Custom Properties & Events
+
+* How I Created Individual Properties For The 'element' Child Component Within The 'server-element' Component
+I added the following Typescript declaration to the 'server-element.component.ts' file:
+#+begin_src ts
+export class ServerElementComponent implements OnInit {
+  element: {type: string, name: string, content: string}
+#+end_src
+
+I then revised the 'serverElements' array to include a specific 'element' object within the 'app.component.ts' file:
+#+begin_src ts
+export class AppComponent {
+  serverElements = [{type: 'server', name: 'Testserver', content: 'Just a test!'}];
+}
+#+end_src
+
+I then modified the 'app.component.html' file to access the 'element' component accordingly:
+#+begin_src html
+<div class="container">
+  <app-cockpit></app-cockpit>
+  <hr>
+  <div class="row">
+    <div class="col-xs-12">
+      <app-server-element
+        *ngFor="let serverElement of serverElements"
+        [element]="serverElement">
+      </app-server-element>
+    </div>
+  </div>
+</div>
+#+end_src
+
+I then modified the 'server-element.component.ts' file to include the '@Input' decorator for the 'element' declaration section as well as a related import for the 'Input' component as well:
+#+begin_src ts
+import { Component, Input, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-server-element',
+  templateUrl: './server-element.component.html',
+  styleUrls: ['./server-element.component.css']
+})
+export class ServerElementComponent implements OnInit {
+  @Input() element: {type: string, name: string, content: string}
+#+end_src
