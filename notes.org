@@ -1,0 +1,98 @@
+* How I Created The 'cockpit' And 'server-element' Components To Spread Out Existing Components In The Main 'app' Component File
+I used the following command:
+#+begin_src bash
+sam@HTCSamuelB:~/Projects/AngularProjects/AngularSection5/Section5ComponentsAndDatabinding$ ng g c cockpit --skip-tests
+Your global Angular CLI version (15.1.2) is greater than your local version (14.2.10). The local Angular CLI version is used.
+
+To disable this warning use "ng config -g cli.warnings.versionMismatch false".
+CREATE src/app/cockpit/cockpit.component.css (0 bytes)
+CREATE src/app/cockpit/cockpit.component.html (22 bytes)
+CREATE src/app/cockpit/cockpit.component.ts (279 bytes)
+UPDATE src/app/app.module.ts (465 bytes)
+#+end_src
+
+I then repeated the same process of using 'ng g c --skip-tests' for the 'server-element' component:
+#+begin_src bash
+sam@HTCSamuelB:~/Projects/AngularProjects/AngularSection5/Section5ComponentsAndDatabinding$ ng g c server-element --skip-tests
+Your global Angular CLI version (15.1.2) is greater than your local version (14.2.10). The local Angular CLI version is used.
+
+To disable this warning use "ng config -g cli.warnings.versionMismatch false".
+CREATE src/app/server-element/server-element.component.css (0 bytes)
+CREATE src/app/server-element/server-element.component.html (29 bytes)
+CREATE src/app/server-element/server-element.component.ts (306 bytes)
+UPDATE src/app/app.module.ts (577 bytes)
+#+end_src
+
+I then modified the 'cockpit.component.html' file to have the following moved over contents:
+#+begin_src html
+<div class="row">
+    <div class="col-xs-12">
+        <p>Add new Servers or blueprints!</p>
+        <label>Server Name</label>
+        <input type="text" class="form-control" [(ngModel)]="newServerName">
+        <label>Server Content</label>
+        <input type="text" class="form-control" [(ngModel)]="newServerContent">
+        <br>
+        <button
+        class="btn btn-primary"
+        (click)="onAddServer()">Add Server</button>
+        <button
+        class="btn btn-primary"
+        (click)="onAddBlueprint()">Add Server Blueprint</button>
+    </div>
+</div>
+#+end_src
+
+I then moved over the related TypeScript components to the corresponding 'cockpit.component.ts' file:
+#+begin_src ts
+  onAddServer() {
+    this.serverElements.push({
+      type: 'server',
+      name: this.newServerName,
+      content: this.newServerContent
+    });
+  }
+
+  onAddBlueprint() {
+    this.serverElements.push({
+      type: 'blueprint',
+      name: this.newServerName,
+      content: this.newServerContent
+    });
+  }
+#+end_src
+
+I then moved the contents of the two server related variables over to the 'cockpit.component.ts' file:
+#+begin_src ts
+export class CockpitComponent implements OnInit {
+  newServerName = '';
+  newServerContent = '';
+#+end_src
+
+I then moved over the 'server-element' component section to the 'server-element.component.html' file as well:
+#+begin_src html
+<div
+    class="panel panel-default"
+    *ngFor="let element of serverElements">
+    <div class="panel-heading">{{ element.name }}</div>
+    <div class="panel-body">
+        <p>
+        <strong *ngIf="element.type === 'server'" style="color: red">{{ element.content }}</strong>
+        <em *ngIf="element.type === 'blueprint'">{{ element.content }}</em>
+        </p>
+    </div>
+</div>
+#+end_src
+
+I then declared the other child components for 'app-cockpit' and 'app-server-element' within the main app component HTML file:
+#+begin_src html
+<div class="container">
+  <app-cockpit></app-cockpit>
+  <hr>
+  <div class="row">
+    <div class="col-xs-12">
+      <app-server-element *ngFor="let serverElement of serverElements"></app-server-element>
+    </div>
+  </div>
+</div>
+#+end_src
